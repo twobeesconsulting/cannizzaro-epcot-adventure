@@ -34,6 +34,9 @@ Protecting sensitive credentials is critical to the integrity and security of th
 - Ensure `.env` (and similar secret files) are included in `.gitignore`.
 
 Example `.env` file (see `.env.example`):
+```
+GOOGLE_API_KEY=your-google-api-key-here
+```
 
 ### Using Secret Managers
 - [Google Secret Manager](https://cloud.google.com/secret-manager/docs)
