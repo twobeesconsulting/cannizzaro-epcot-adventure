@@ -1011,17 +1011,17 @@
             </div>
             
             <div class="stats-dashboard">
-                <div class="stat-box" onclick="showStatsModal('completed')">
+                <div class="stat-box" onclick="showStatsModal('completed')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showStatsModal('completed')}" aria-label="View completed challenges details">
                     <div class="stat-emoji">✅</div>
                     <div class="stat-value" id="completedStat">0</div>
                     <div class="stat-title">Completed</div>
                 </div>
-                <div class="stat-box" onclick="showStatsModal('countries')">
+                <div class="stat-box" onclick="showStatsModal('countries')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showStatsModal('countries')}" aria-label="View countries progress details">
                     <div class="stat-emoji">🌍</div>
                     <div class="stat-value" id="countriesStat">0</div>
                     <div class="stat-title">Countries</div>
                 </div>
-                <div class="stat-box" onclick="showStatsModal('photos')">
+                <div class="stat-box" onclick="showStatsModal('photos')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showStatsModal('photos')}" aria-label="View photos progress details">
                     <div class="stat-emoji">📸</div>
                     <div class="stat-value" id="photosStat">0</div>
                     <div class="stat-title">Photos</div>
@@ -1108,9 +1108,9 @@
     </div>
     
     <!-- STATS DETAIL MODAL -->
-    <div class="modal-backdrop" id="statsModal">
+    <div class="modal-backdrop" id="statsModal" role="dialog" aria-modal="true" aria-labelledby="statsModalTitle">
         <div class="modal-box stats-modal-box">
-            <button class="modal-close-btn" onclick="closeStatsModal()">×</button>
+            <button class="modal-close-btn" onclick="closeStatsModal()" aria-label="Close statistics modal">×</button>
             <div class="modal-confetti" id="statsModalEmoji">📊</div>
             <h2 class="modal-title" id="statsModalTitle">Statistics</h2>
             <div class="stats-modal-content" id="statsModalContent">
