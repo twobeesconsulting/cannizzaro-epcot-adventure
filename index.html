@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcgyqnX0qKID5n3dWgmX-AnHevToI6LSc&libraries=places"></script>
+    <!-- Google Maps API will be loaded dynamically from config.js -->
     <style>
         :root {
             --purple-primary: #6B5B95;
@@ -1187,7 +1187,37 @@
         </div>
     </div>
     
+    <!-- Load configuration first -->
+    <script src="config.js"></script>
+    
     <script>
+        // Load Google Maps API dynamically
+        function loadGoogleMapsAPI() {
+            return new Promise((resolve, reject) => {
+                if (typeof google !== 'undefined' && google.maps) {
+                    resolve();
+                    return;
+                }
+                
+                const apiKey = (typeof CONFIG !== 'undefined' && CONFIG.GOOGLE_MAPS_API_KEY) 
+                    ? CONFIG.GOOGLE_MAPS_API_KEY 
+                    : '';
+                
+                if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                    reject(new Error('Google Maps API key not configured. Please copy config.example.js to config.js and add your API key. See README.md for setup instructions.'));
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+                script.async = true;
+                script.defer = true;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
         // Challenge data with actual EPCOT coordinates
         const challenges = [
             {
@@ -1535,10 +1565,32 @@
         let map, markers = [];
         
         // Initialize
-        function init() {
-            initMap();
+        async function init() {
+            // Always render challenges and stats, even if map fails
             renderChallenges();
             updateStats();
+            
+            // Try to load and initialize map (map is optional)
+            try {
+                await loadGoogleMapsAPI();
+                initMap();
+            } catch (error) {
+                console.error('Failed to load Google Maps:', error);
+                // Show a non-intrusive error message in the map container
+                const mapContainer = document.getElementById('googleMap');
+                if (mapContainer) {
+                    mapContainer.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f0f0f0; color: #666; padding: 20px; text-align: center;">
+                            <div>
+                                <div style="font-size: 48px; margin-bottom: 10px;">🗺️</div>
+                                <div style="font-weight: bold; margin-bottom: 10px;">Map Not Available</div>
+                                <div style="font-size: 14px;">The Google Maps API failed to load. Please check your config.js file and ensure you have a valid API key.</div>
+                                <div style="font-size: 12px; margin-top: 10px; opacity: 0.7;">The challenge list below is still fully functional!</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
         }
         
         // Initialize Google Map
@@ -1666,7 +1718,7 @@
                 card.innerHTML = `
                     <div class="challenge-top">
                         <div class="challenge-emoji">${challenge.emoji}</div>
-                        <div class="challenge-main">
+                        <div class="challenge-main" onclick="navigateToChallenge(${index})" style="cursor: pointer;">
                             <div class="challenge-header-row">
                                 <h3 class="challenge-name">${challenge.name}</h3>
                                 <div class="challenge-time-badge">⏰ ${challenge.time}</div>
@@ -1678,7 +1730,7 @@
                             ${tipsHTML}
                         </div>
                         <div class="check-action">
-                            <div class="check-box ${isCompleted ? 'checked' : ''}" onclick="toggleChallenge('${challenge.id}')"></div>
+                            <div class="check-box ${isCompleted ? 'checked' : ''}" onclick="event.stopPropagation(); toggleChallenge('${challenge.id}')"></div>
                         </div>
                     </div>
                 `;
@@ -1854,10 +1906,38 @@
             if (tab === 'map') {
                 document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
                 document.getElementById('mapTab').classList.add('active');
-                google.maps.event.trigger(map, 'resize');
+                // Only trigger resize if map exists
+                if (typeof google !== 'undefined' && google.maps && map) {
+                    google.maps.event.trigger(map, 'resize');
+                }
             } else {
                 document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
                 document.getElementById('listTab').classList.add('active');
+            }
+        }
+        
+        // Navigate to a specific challenge on the map
+        function navigateToChallenge(index) {
+            const challenge = challenges[index];
+            if (challenge.lat && challenge.lng) {
+                // Check if map is available
+                if (!map || !markers || markers.length === 0) {
+                    alert('Map is not available. The map feature requires a valid Google Maps API key in config.js.');
+                    return;
+                }
+                
+                // Switch to map tab
+                switchTab('map');
+                
+                // Pan to the challenge location and zoom
+                map.panTo({ lat: challenge.lat, lng: challenge.lng });
+                map.setZoom(18);
+                
+                // Open the info window for this marker
+                if (markers[index]) {
+                    markers.forEach(m => m.infoWindow.close());
+                    markers[index].infoWindow.open(map, markers[index].marker);
+                }
             }
         }
         
