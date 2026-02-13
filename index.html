@@ -972,7 +972,7 @@
                 grid-template-columns: 1fr;
             }
             
-            /* Map Info Window Optimization */
+            /* Map Info Window Optimization - !important needed to override Google Maps inline styles */
             .gm-style-iw-c {
                 max-width: 90% !important;
             }
@@ -990,6 +990,7 @@
                 flex-direction: column !important;
             }
             
+            /* Touch-friendly checkbox size - !important to ensure minimum touch target */
             .map-check-box {
                 min-width: 44px !important;
                 min-height: 44px !important;
