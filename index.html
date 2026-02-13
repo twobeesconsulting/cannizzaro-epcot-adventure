@@ -1204,7 +1204,7 @@
                     : '';
                 
                 if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
-                    reject(new Error('Google Maps API key not configured. Please create config.js from config.example.js and add your API key.'));
+                    reject(new Error('Google Maps API key not configured. Please copy config.example.js to config.js and add your API key. See README.md for setup instructions.'));
                     return;
                 }
                 
@@ -1573,7 +1573,7 @@
                 updateStats();
             } catch (error) {
                 console.error('Failed to load Google Maps:', error);
-                alert('Failed to load Google Maps. Please ensure config.js is set up correctly with a valid API key.');
+                alert('Failed to load Google Maps. Please copy config.example.js to config.js and add your API key. Check the browser console for details. See README.md for setup instructions.');
             }
         }
         
