@@ -1,6 +1,12 @@
 # cannizzaro-epcot-adventure
 Vincent's Epic EPCOT Adventure
 
+## 🗺️ Need the Google Maps API Link?
+
+**See [GOOGLE_MAPS_API_LINK.md](GOOGLE_MAPS_API_LINK.md) for the API URL and complete setup instructions!**
+
+The Google Maps API link is: `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places`
+
 ## Setup Instructions
 
 1. Clone the repository
@@ -17,6 +23,8 @@ Vincent's Epic EPCOT Adventure
 - See [CONFIG_FAQ.md](CONFIG_FAQ.md) for detailed explanation
 
 ## Google Maps API Key Setup
+
+**📖 For complete details on the API link and setup, see [GOOGLE_MAPS_API_LINK.md](GOOGLE_MAPS_API_LINK.md)**
 
 This application requires a Google Maps API key. **Important security note**: Since this is a frontend-only application, the API key will be visible in the browser. To protect your API key:
 
