@@ -4,9 +4,17 @@ Vincent's Epic EPCOT Adventure
 ## Setup Instructions
 
 1. Clone the repository
-2. Copy `config.example.js` to `config.js`
-3. Add your Google Maps API key to `config.js`
+2. **Copy `config.example.js` to `config.js`** (stays local, not committed)
+   ```bash
+   cp config.example.js config.js
+   ```
+3. **Add your Google Maps API key to `config.js`** (your actual key, keep it local)
 4. Open `index.html` in your browser or serve it via a local web server
+
+**Important**: 
+- ✅ `config.js` = **Local only** (contains your real key, gitignored)
+- ✅ `config.example.js` = **On GitHub** (template, already committed)
+- See [CONFIG_FAQ.md](CONFIG_FAQ.md) for detailed explanation
 
 ## Google Maps API Key Setup
 

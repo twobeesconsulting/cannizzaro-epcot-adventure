@@ -16,6 +16,8 @@ Three issues were fixed:
 cp config.example.js config.js
 ```
 
+**Important**: This creates a **LOCAL file** (`config.js`) that will NOT be committed to GitHub.
+
 ### 2. Add Your Google Maps API Key
 Edit `config.js` and replace `YOUR_API_KEY_HERE` with your actual key:
 ```javascript
@@ -23,6 +25,13 @@ const CONFIG = {
     GOOGLE_MAPS_API_KEY: 'AIzaSy...'  // Your actual key here
 };
 ```
+
+**Note**: 
+- ✅ Keep this file LOCAL (it's in `.gitignore`)
+- ❌ Never commit `config.js` to GitHub
+- ✅ `config.example.js` stays on GitHub as a template
+
+See [CONFIG_FAQ.md](CONFIG_FAQ.md) for more details on config file management.
 
 ### 3. Open the Application
 Simply open `index.html` in your browser or serve it with:
