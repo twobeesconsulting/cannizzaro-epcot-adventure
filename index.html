@@ -809,6 +809,107 @@
             box-shadow: 0 10px 35px rgba(255, 107, 53, 0.7);
         }
         
+        /* STATS MODAL */
+        .stats-modal-box {
+            max-height: 80vh;
+            overflow-y: auto;
+            max-width: 650px;
+        }
+        
+        .stats-modal-content {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+            padding: 10px;
+        }
+        
+        .stats-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-item.completed {
+            border-left-color: var(--success);
+            background: #f0f9f4;
+        }
+        
+        .stats-item.pending {
+            border-left-color: #ddd;
+            opacity: 0.6;
+        }
+        
+        .stats-item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .stats-item-emoji {
+            font-size: 28px;
+        }
+        
+        .stats-item-text {
+            text-align: left;
+        }
+        
+        .stats-item-name {
+            font-weight: 700;
+            color: var(--purple-deep);
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+        
+        .stats-item-detail {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .stats-item-status {
+            font-size: 24px;
+        }
+        
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .modal-close-btn:hover {
+            background: #f0f0f0;
+            color: var(--purple-deep);
+            transform: rotate(90deg);
+        }
+        
+        .stat-box {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(107, 91, 149, 0.3);
+        }
+        
         /* FOOTER */
         .app-footer {
             background: var(--grey-overlay);
@@ -910,17 +1011,17 @@
             </div>
             
             <div class="stats-dashboard">
-                <div class="stat-box">
+                <div class="stat-box" onclick="showStatsModal('completed')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showStatsModal('completed')}" aria-label="View completed challenges details">
                     <div class="stat-emoji">✅</div>
                     <div class="stat-value" id="completedStat">0</div>
                     <div class="stat-title">Completed</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box" onclick="showStatsModal('countries')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showStatsModal('countries')}" aria-label="View countries progress details">
                     <div class="stat-emoji">🌍</div>
                     <div class="stat-value" id="countriesStat">0</div>
                     <div class="stat-title">Countries</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box" onclick="showStatsModal('photos')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showStatsModal('photos')}" aria-label="View photos progress details">
                     <div class="stat-emoji">📸</div>
                     <div class="stat-value" id="photosStat">0</div>
                     <div class="stat-title">Photos</div>
@@ -1003,6 +1104,19 @@
             <h2 class="modal-title">Challenge Complete!</h2>
             <p class="modal-text" id="celebrationText"></p>
             <button class="modal-cta" onclick="closeModal()">Continue Adventure!</button>
+        </div>
+    </div>
+    
+    <!-- STATS DETAIL MODAL -->
+    <div class="modal-backdrop" id="statsModal" role="dialog" aria-modal="true" aria-labelledby="statsModalTitle">
+        <div class="modal-box stats-modal-box">
+            <button class="modal-close-btn" onclick="closeStatsModal()" aria-label="Close statistics modal">×</button>
+            <div class="modal-confetti" id="statsModalEmoji">📊</div>
+            <h2 class="modal-title" id="statsModalTitle">Statistics</h2>
+            <div class="stats-modal-content" id="statsModalContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            <button class="modal-cta" onclick="closeStatsModal()">Close</button>
         </div>
     </div>
     
@@ -1410,11 +1524,34 @@
                     
                     const infoWindow = new google.maps.InfoWindow({
                         content: `
-                            <div style="font-family: Lato, sans-serif; padding: 10px; max-width: 250px;">
-                                <div style="font-size: 24px; margin-bottom: 8px;">${challenge.emoji}</div>
-                                <h3 style="font-family: Playfair Display, serif; color: #4A4063; margin-bottom: 8px; font-size: 18px;">${challenge.name}</h3>
-                                <p style="color: #FF6B35; font-weight: 700; font-size: 13px; margin-bottom: 8px;">⏰ ${challenge.time}</p>
-                                <p style="color: #555; font-size: 14px; line-height: 1.5;">${challenge.description.replace(/<[^>]*>/g, '')}</p>
+                            <div style="font-family: Lato, sans-serif; padding: 10px; max-width: 280px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 24px; margin-bottom: 8px;">${challenge.emoji}</div>
+                                        <h3 style="font-family: Playfair Display, serif; color: #4A4063; margin-bottom: 8px; font-size: 18px;">${challenge.name}</h3>
+                                        <p style="color: #FF6B35; font-weight: 700; font-size: 13px; margin-bottom: 8px;">⏰ ${challenge.time}</p>
+                                        <p style="color: #555; font-size: 14px; line-height: 1.5;">${challenge.description.replace(/<[^>]*>/g, '')}</p>
+                                    </div>
+                                    <div class="map-check-box ${isCompleted ? 'checked' : ''}" onclick="toggleChallenge('${challenge.id}')" style="
+                                        width: 50px;
+                                        height: 50px;
+                                        border: 3px solid #6B5B95;
+                                        border-radius: 12px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        cursor: pointer;
+                                        background: ${isCompleted ? 'linear-gradient(135deg, #52B788, #34D399)' : 'white'};
+                                        border-color: ${isCompleted ? '#52B788' : '#6B5B95'};
+                                        flex-shrink: 0;
+                                        transition: all 0.3s ease;
+                                        font-size: 28px;
+                                        font-weight: 900;
+                                        color: white;
+                                    " onmouseover="this.style.transform='scale(1.1) rotate(5deg)'; this.style.borderColor='#FF6B35';" onmouseout="this.style.transform='scale(1)'; this.style.borderColor='${isCompleted ? '#52B788' : '#6B5B95'}';">
+                                        ${isCompleted ? '✓' : ''}
+                                    </div>
+                                </div>
                             </div>
                         `
                     });
@@ -1522,6 +1659,118 @@
         // Close modal
         function closeModal() {
             document.getElementById('celebrationModal').style.display = 'none';
+        }
+        
+        // Show stats modal
+        function showStatsModal(type) {
+            const modalEmoji = document.getElementById('statsModalEmoji');
+            const modalTitle = document.getElementById('statsModalTitle');
+            const modalContent = document.getElementById('statsModalContent');
+            
+            let content = '';
+            
+            if (type === 'completed') {
+                modalEmoji.textContent = '✅';
+                modalTitle.textContent = 'Completed Challenges';
+                
+                const completedChallenges = challenges.filter(c => completed.includes(c.id));
+                
+                if (completedChallenges.length === 0) {
+                    content = '<p style="color: #999; text-align: center; padding: 40px;">No challenges completed yet. Start your adventure!</p>';
+                } else {
+                    completedChallenges.forEach(challenge => {
+                        content += `
+                            <div class="stats-item completed">
+                                <div class="stats-item-info">
+                                    <div class="stats-item-emoji">${challenge.emoji}</div>
+                                    <div class="stats-item-text">
+                                        <div class="stats-item-name">${challenge.name}</div>
+                                        <div class="stats-item-detail">${challenge.time}</div>
+                                    </div>
+                                </div>
+                                <div class="stats-item-status">✓</div>
+                            </div>
+                        `;
+                    });
+                }
+            } else if (type === 'countries') {
+                modalEmoji.textContent = '🌍';
+                modalTitle.textContent = 'Countries Progress';
+                
+                // Get unique countries from challenges with drink tag
+                const countryMap = new Map();
+                challenges.forEach(challenge => {
+                    if (challenge.country && challenge.tags.includes('drink')) {
+                        if (!countryMap.has(challenge.country)) {
+                            countryMap.set(challenge.country, {
+                                name: challenge.country,
+                                challenge: challenge,
+                                completed: completed.includes(challenge.id)
+                            });
+                        }
+                    }
+                });
+                
+                const countryNames = {
+                    'mexico': '🇲🇽 Mexico',
+                    'norway': '🇳🇴 Norway',
+                    'china': '🇨🇳 China',
+                    'germany': '🇩🇪 Germany',
+                    'italy': '🇮🇹 Italy',
+                    'usa': '🇺🇸 USA',
+                    'japan': '🇯🇵 Japan',
+                    'morocco': '🇲🇦 Morocco',
+                    'france': '🇫🇷 France',
+                    'uk': '🇬🇧 United Kingdom',
+                    'canada': '🇨🇦 Canada'
+                };
+                
+                countryMap.forEach((data, country) => {
+                    const isCompleted = data.completed;
+                    const displayName = countryNames[country] || country;
+                    content += `
+                        <div class="stats-item ${isCompleted ? 'completed' : 'pending'}">
+                            <div class="stats-item-info">
+                                <div class="stats-item-emoji">${data.challenge.emoji}</div>
+                                <div class="stats-item-text">
+                                    <div class="stats-item-name">${displayName}</div>
+                                    <div class="stats-item-detail">${data.challenge.name}</div>
+                                </div>
+                            </div>
+                            <div class="stats-item-status">${isCompleted ? '✓' : '○'}</div>
+                        </div>
+                    `;
+                });
+            } else if (type === 'photos') {
+                modalEmoji.textContent = '📸';
+                modalTitle.textContent = 'Photos Progress';
+                
+                const photoChallenges = challenges.filter(c => c.tags.includes('photo'));
+                
+                photoChallenges.forEach(challenge => {
+                    const isCompleted = completed.includes(challenge.id);
+                    content += `
+                        <div class="stats-item ${isCompleted ? 'completed' : 'pending'}">
+                            <div class="stats-item-info">
+                                <div class="stats-item-emoji">${challenge.emoji}</div>
+                                <div class="stats-item-text">
+                                    <div class="stats-item-name">${challenge.name}</div>
+                                    <div class="stats-item-detail">${challenge.time}</div>
+                                </div>
+                            </div>
+                            <div class="stats-item-status">${isCompleted ? '✓' : '○'}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            modalContent.innerHTML = content;
+            document.getElementById('statsModal').style.display = 'flex';
+        }
+        
+        // Close stats modal
+        function closeStatsModal() {
+            document.getElementById('statsModal').style.display = 'none';
         }
         
         // Switch tabs
