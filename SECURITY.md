@@ -61,7 +61,6 @@ Instead of trying to hide the API key (which is impossible in a frontend app), w
    - Note: This adds complexity and may not be necessary if restrictions are properly set
 
 ## 4. Secure Credential Handling
-## 4. Secure Credential Handling
 
 ### Risks of Exposed Credentials
 - Unexpected usage and billing charges
@@ -103,8 +102,6 @@ const CONFIG = {
    - Configure daily usage limits
    - Set up billing alerts
    - Monitor usage regularly
-
-### .env Files (Alternative Approach)
 
 ### .env Files (Alternative Approach)
 For server-side applications, use `.env` files:
