@@ -971,6 +971,72 @@
             .legend-grid {
                 grid-template-columns: 1fr;
             }
+            
+            /* Map Info Window Optimization */
+            .gm-style-iw-c {
+                max-width: 90% !important;
+            }
+            
+            .gm-style-iw-d {
+                overflow: auto !important;
+            }
+            
+            .google-map-info-window {
+                max-width: 90% !important;
+                font-size: 14px !important;
+            }
+            
+            .google-map-info-window > div {
+                flex-direction: column !important;
+            }
+            
+            .map-check-box {
+                min-width: 44px !important;
+                min-height: 44px !important;
+            }
+            
+            /* Stats Modal Optimization */
+            .stats-modal-box {
+                width: 95%;
+                margin: 0 auto;
+                font-size: 14px;
+            }
+            
+            .stats-modal-content {
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+            
+            /* Touch-friendly buttons and checkboxes */
+            button, .btn, .action-btn {
+                min-height: 44px;
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+            
+            /* Brand badge size adjustment for mobile */
+            .brand-badge {
+                width: 70px;
+                height: 70px;
+                top: 10px;
+                left: 10px;
+            }
+            
+            /* Hero content padding adjustment */
+            .hero-content {
+                padding: 30px 20px 20px 20px;
+            }
+            
+            /* Challenge card optimization */
+            .challenge-card {
+                padding: 15px;
+            }
+            
+            /* Stats items optimization */
+            .stats-item {
+                padding: 12px 15px;
+                margin: 8px 0;
+            }
         }
     </style>
 </head>
@@ -1524,32 +1590,38 @@
                     
                     const infoWindow = new google.maps.InfoWindow({
                         content: `
-                            <div style="font-family: Lato, sans-serif; padding: 10px; max-width: 280px;">
-                                <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
-                                    <div style="flex: 1;">
-                                        <div style="font-size: 24px; margin-bottom: 8px;">${challenge.emoji}</div>
-                                        <h3 style="font-family: Playfair Display, serif; color: #4A4063; margin-bottom: 8px; font-size: 18px;">${challenge.name}</h3>
-                                        <p style="color: #FF6B35; font-weight: 700; font-size: 13px; margin-bottom: 8px;">⏰ ${challenge.time}</p>
-                                        <p style="color: #555; font-size: 14px; line-height: 1.5;">${challenge.description.replace(/<[^>]*>/g, '')}</p>
+                            <div class="google-map-info-window" style="font-family: Lato, sans-serif; padding: 10px; max-width: 280px;">
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 24px; margin-bottom: 8px;">${challenge.emoji}</div>
+                                            <h3 style="font-family: Playfair Display, serif; color: #4A4063; margin-bottom: 8px; font-size: 18px;">${challenge.name}</h3>
+                                            <p style="color: #FF6B35; font-weight: 700; font-size: 13px; margin-bottom: 8px;">⏰ ${challenge.time}</p>
+                                        </div>
+                                        <div class="map-check-box ${isCompleted ? 'checked' : ''}" onclick="toggleChallenge('${challenge.id}')" style="
+                                            min-width: 50px;
+                                            min-height: 50px;
+                                            width: 50px;
+                                            height: 50px;
+                                            border: 3px solid #6B5B95;
+                                            border-radius: 12px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            cursor: pointer;
+                                            background: ${isCompleted ? 'linear-gradient(135deg, #52B788, #34D399)' : 'white'};
+                                            border-color: ${isCompleted ? '#52B788' : '#6B5B95'};
+                                            flex-shrink: 0;
+                                            transition: all 0.3s ease;
+                                            font-size: 28px;
+                                            font-weight: 900;
+                                            color: white;
+                                        " onmouseover="this.style.transform='scale(1.1) rotate(5deg)'; this.style.borderColor='#FF6B35';" onmouseout="this.style.transform='scale(1)'; this.style.borderColor='${isCompleted ? '#52B788' : '#6B5B95'}';">
+                                            ${isCompleted ? '✓' : ''}
+                                        </div>
                                     </div>
-                                    <div class="map-check-box ${isCompleted ? 'checked' : ''}" onclick="toggleChallenge('${challenge.id}')" style="
-                                        width: 50px;
-                                        height: 50px;
-                                        border: 3px solid #6B5B95;
-                                        border-radius: 12px;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        cursor: pointer;
-                                        background: ${isCompleted ? 'linear-gradient(135deg, #52B788, #34D399)' : 'white'};
-                                        border-color: ${isCompleted ? '#52B788' : '#6B5B95'};
-                                        flex-shrink: 0;
-                                        transition: all 0.3s ease;
-                                        font-size: 28px;
-                                        font-weight: 900;
-                                        color: white;
-                                    " onmouseover="this.style.transform='scale(1.1) rotate(5deg)'; this.style.borderColor='#FF6B35';" onmouseout="this.style.transform='scale(1)'; this.style.borderColor='${isCompleted ? '#52B788' : '#6B5B95'}';">
-                                        ${isCompleted ? '✓' : ''}
+                                    <div>
+                                        <p style="color: #555; font-size: 14px; line-height: 1.5;">${challenge.description.replace(/<[^>]*>/g, '')}</p>
                                     </div>
                                 </div>
                             </div>
