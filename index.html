@@ -259,6 +259,88 @@
             font-weight: 700;
         }
         
+        /* RESET BUTTON */
+        .reset-btn-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-light));
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 30px;
+            font-family: 'Lato', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+            background: linear-gradient(135deg, var(--orange-light), var(--gold));
+        }
+        
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* FOOTER */
+        .app-footer {
+            background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple-primary) 100%);
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+            border-top: 4px solid var(--orange-primary);
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        .footer-text {
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .footer-social {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--orange-light);
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .footer-social a {
+            color: var(--orange-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-social a:hover {
+            color: var(--gold);
+        }
+        
         /* TAB NAVIGATION */
         .tab-bar {
             display: flex;
@@ -1027,27 +1109,6 @@
             text-align: center;
         }
         
-        .reset-action {
-            background: white;
-            color: var(--purple-deep);
-            border: 3px solid white;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-family: 'Lato', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-        
-        .reset-action:hover {
-            background: transparent;
-            color: white;
-            transform: scale(1.05);
-        }
-        
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .hero-title {
@@ -1204,6 +1265,13 @@
                     <div class="stat-title">Photos</div>
                 </div>
             </div>
+            
+            <div class="reset-btn-container">
+                <button class="reset-btn" onclick="resetAll()" aria-label="Reset all progress">
+                    <span>🔄</span>
+                    <span>Reset Progress</span>
+                </button>
+            </div>
         </div>
         
         <!-- TAB NAVIGATION -->
@@ -1270,7 +1338,15 @@
         
         <!-- FOOTER -->
         <div class="app-footer">
-            <button class="reset-action" onclick="resetAll()">Reset Progress</button>
+            <div class="footer-content">
+                <div class="footer-title">Created for Vincent's 21st Birthday Adventure 🎂</div>
+                <div class="footer-text">
+                    Cannizzaro Family Trip to EPCOT • March 8, 2026
+                </div>
+                <div class="footer-social">
+                    Follow the adventure: <a href="https://instagram.com/magicaldocsarahadventures" target="_blank" rel="noopener noreferrer">@magicaldocsarahadventures</a>
+                </div>
+            </div>
         </div>
     </div>
     
