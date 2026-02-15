@@ -1916,8 +1916,9 @@
             
             // Check if we just reached 100% completion (transition from < 100% to 100%)
             if (totalCompleted === totalChallenges && totalChallenges > 0) {
-                // Only show modal when transitioning TO 100% (not already at 100%)
-                if (previousCompletionPercentage < 100) {
+                // Only show modal when transitioning TO 100% from a tracked lower percentage
+                // This skips showing on initial page load when already at 100% (previousCompletionPercentage === -1)
+                if (previousCompletionPercentage >= 0 && previousCompletionPercentage < 100) {
                     showCompletionModal(totalCompleted, countries, photos);
                 }
             }
