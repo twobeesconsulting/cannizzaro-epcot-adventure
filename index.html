@@ -900,6 +900,115 @@
             transform: rotate(90deg);
         }
         
+        /* COMPLETION CELEBRATION MODAL */
+        .completion-modal-box {
+            max-width: 700px;
+            background: linear-gradient(135deg, var(--cream) 0%, white 100%);
+            border: 5px solid var(--gold);
+            position: relative;
+            overflow: visible;
+        }
+        
+        .completion-title {
+            font-size: 42px;
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+        
+        .completion-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--orange-primary);
+            margin-bottom: 40px;
+        }
+        
+        .completion-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 30px 0;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(107, 91, 149, 0.2);
+        }
+        
+        .completion-stat-item {
+            text-align: center;
+        }
+        
+        .completion-stat-emoji {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .completion-stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--purple-deep), var(--orange-primary), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        
+        .completion-stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--purple-primary);
+            font-weight: 700;
+        }
+        
+        .completion-message {
+            font-size: 18px;
+            color: var(--purple-deep);
+            line-height: 1.6;
+            margin: 30px 0;
+            font-weight: 600;
+        }
+        
+        /* CONFETTI ANIMATION */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 2001;
+        }
+        
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            top: -10px;
+            opacity: 0;
+            animation: confettiFall 3s ease-in forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                top: -10px;
+                transform: translateX(0) rotateZ(0deg);
+            }
+            100% {
+                opacity: 0.7;
+                top: 100vh;
+                transform: translateX(var(--confetti-x)) rotateZ(720deg);
+            }
+        }
+        
         .stat-box {
             cursor: pointer;
             transition: all 0.3s ease;
@@ -1171,6 +1280,35 @@
             <h2 class="modal-title">Challenge Complete!</h2>
             <p class="modal-text" id="celebrationText"></p>
             <button class="modal-cta" onclick="closeModal()">Continue Adventure!</button>
+        </div>
+    </div>
+    
+    <!-- COMPLETION CELEBRATION MODAL -->
+    <div class="modal-backdrop" id="completionModal">
+        <div class="modal-box completion-modal-box">
+            <div class="confetti-container" id="confettiContainer"></div>
+            <div class="modal-confetti">🎉🎊</div>
+            <h2 class="modal-title completion-title">Vincent's 21st Birthday</h2>
+            <h3 class="completion-subtitle">EPCOT Adventure Complete!</h3>
+            <div class="completion-stats">
+                <div class="completion-stat-item">
+                    <div class="completion-stat-emoji">✅</div>
+                    <div class="completion-stat-value" id="completionChallenges">0</div>
+                    <div class="completion-stat-label">Challenges</div>
+                </div>
+                <div class="completion-stat-item">
+                    <div class="completion-stat-emoji">🌍</div>
+                    <div class="completion-stat-value" id="completionCountries">0</div>
+                    <div class="completion-stat-label">Countries</div>
+                </div>
+                <div class="completion-stat-item">
+                    <div class="completion-stat-emoji">📸</div>
+                    <div class="completion-stat-value" id="completionPhotos">0</div>
+                    <div class="completion-stat-label">Photos</div>
+                </div>
+            </div>
+            <p class="completion-message">🎊 What an incredible adventure! You've explored every corner of EPCOT and made unforgettable memories! 🎊</p>
+            <button class="modal-cta" onclick="closeCompletionModal()">Celebrate Again! 🎉</button>
         </div>
     </div>
     
@@ -1773,6 +1911,62 @@
             const percentage = Math.round((totalCompleted / totalChallenges) * 100);
             document.getElementById('progressBar').style.width = percentage + '%';
             document.getElementById('progressPercent').textContent = percentage + '%';
+            
+            // Check if all challenges are completed
+            if (totalCompleted === totalChallenges && totalChallenges > 0) {
+                // Check if we've shown the completion modal this session
+                const hasShownCompletion = sessionStorage.getItem('completionModalShown');
+                if (!hasShownCompletion) {
+                    showCompletionModal(totalCompleted, countries, photos);
+                    sessionStorage.setItem('completionModalShown', 'true');
+                }
+            }
+        }
+        
+        // Show completion celebration modal
+        function showCompletionModal(challenges, countries, photos) {
+            // Update the stats in the modal
+            document.getElementById('completionChallenges').textContent = challenges;
+            document.getElementById('completionCountries').textContent = countries;
+            document.getElementById('completionPhotos').textContent = photos;
+            
+            // Show the modal
+            document.getElementById('completionModal').style.display = 'flex';
+            
+            // Create confetti animation
+            createConfetti();
+        }
+        
+        // Close completion modal
+        function closeCompletionModal() {
+            document.getElementById('completionModal').style.display = 'none';
+            // Clear confetti
+            const container = document.getElementById('confettiContainer');
+            if (container) {
+                container.innerHTML = '';
+            }
+        }
+        
+        // Create confetti animation
+        function createConfetti() {
+            const container = document.getElementById('confettiContainer');
+            if (!container) return;
+            
+            container.innerHTML = ''; // Clear existing confetti
+            
+            const colors = ['#6B5B95', '#FF6B35', '#F4A261', '#52B788', '#FFF5EB'];
+            const confettiCount = 100;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.setProperty('--confetti-x', (Math.random() - 0.5) * 200 + 'px');
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                container.appendChild(confetti);
+            }
         }
         
         // Show celebration modal
