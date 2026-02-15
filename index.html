@@ -993,7 +993,8 @@
             background: var(--gold);
             top: -10px;
             opacity: 0;
-            animation: confettiFall 3s ease-in forwards;
+            /* Duration is set dynamically via inline style (3-5s) */
+            animation: confettiFall ease-in forwards;
         }
         
         @keyframes confettiFall {
@@ -1916,7 +1917,7 @@
             if (totalCompleted === totalChallenges && totalChallenges > 0) {
                 // Check if we've shown the completion modal this session
                 const hasShownCompletion = sessionStorage.getItem('completionModalShown');
-                if (!hasShownCompletion) {
+                if (hasShownCompletion !== 'true') {
                     showCompletionModal(totalCompleted, countries, photos);
                     sessionStorage.setItem('completionModalShown', 'true');
                 }
@@ -1956,6 +1957,9 @@
             
             const colors = ['#6B5B95', '#FF6B35', '#F4A261', '#52B788', '#FFF5EB'];
             const confettiCount = 100;
+            const maxDelaySeconds = 1;
+            const minDurationSeconds = 3;
+            const maxDurationSeconds = 5;
             
             for (let i = 0; i < confettiCount; i++) {
                 const confetti = document.createElement('div');
@@ -1963,8 +1967,8 @@
                 confetti.style.left = Math.random() * 100 + '%';
                 confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.setProperty('--confetti-x', (Math.random() - 0.5) * 200 + 'px');
-                confetti.style.animationDelay = Math.random() * 3 + 's';
-                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confetti.style.animationDelay = Math.random() * maxDelaySeconds + 's';
+                confetti.style.animationDuration = (Math.random() * (maxDurationSeconds - minDurationSeconds) + minDurationSeconds) + 's';
                 container.appendChild(confetti);
             }
         }
