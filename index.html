@@ -1702,6 +1702,7 @@
         // State management
         let completed = JSON.parse(localStorage.getItem('vincentChallenges') || '[]');
         let map, markers = [];
+        let previousCompletionPercentage = -1; // Track previous completion percentage to detect transitions
         
         // Initialize
         async function init() {
@@ -1913,15 +1914,16 @@
             document.getElementById('progressBar').style.width = percentage + '%';
             document.getElementById('progressPercent').textContent = percentage + '%';
             
-            // Check if all challenges are completed
+            // Check if we just reached 100% completion (transition from < 100% to 100%)
             if (totalCompleted === totalChallenges && totalChallenges > 0) {
-                // Check if we've shown the completion modal this session
-                const hasShownCompletion = sessionStorage.getItem('completionModalShown');
-                if (hasShownCompletion !== 'true') {
+                // Only show modal when transitioning TO 100% (not already at 100%)
+                if (previousCompletionPercentage < 100) {
                     showCompletionModal(totalCompleted, countries, photos);
-                    sessionStorage.setItem('completionModalShown', 'true');
                 }
             }
+            
+            // Update previous percentage for next check
+            previousCompletionPercentage = percentage;
         }
         
         // Show completion celebration modal
