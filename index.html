@@ -1209,6 +1209,99 @@
                 padding: 12px 15px;
                 margin: 8px 0;
             }
+            
+            /* Fix checkbox overflow on mobile - Issue #1 */
+            .challenge-top {
+                gap: 15px;
+            }
+            
+            .check-box {
+                width: 44px;
+                height: 44px;
+                border-width: 3px;
+                flex-shrink: 0;
+            }
+            
+            .check-box.checked::after {
+                font-size: 24px;
+            }
+            
+            .check-action {
+                flex-shrink: 0;
+            }
+            
+            /* Celebration modal responsive - Issue #2 */
+            .modal-box {
+                max-width: 95%;
+                padding: 30px 20px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .modal-confetti {
+                font-size: 60px;
+                margin-bottom: 15px;
+            }
+            
+            .modal-title {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            
+            .modal-text {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .modal-cta {
+                padding: 14px 30px;
+                font-size: 14px;
+                width: 100%;
+            }
+            
+            /* Completion modal responsive - Issue #2 */
+            .completion-modal-box {
+                max-width: 95%;
+                padding: 30px 20px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .completion-title {
+                font-size: 28px;
+            }
+            
+            .completion-subtitle {
+                font-size: 20px;
+                margin-bottom: 25px;
+            }
+            
+            .completion-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 20px;
+                margin: 20px 0;
+            }
+            
+            .completion-stat-emoji {
+                font-size: 32px;
+            }
+            
+            .completion-stat-value {
+                font-size: 36px;
+            }
+            
+            .completion-message {
+                font-size: 16px;
+                margin: 20px 0;
+            }
+            
+            /* Ensure reset button is visible - Issue #3 */
+            .reset-btn {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -1353,6 +1446,7 @@
     <!-- CELEBRATION MODAL -->
     <div class="modal-backdrop" id="celebrationModal">
         <div class="modal-box">
+            <button class="modal-close-btn" onclick="closeModal()" aria-label="Close celebration modal">×</button>
             <div class="modal-confetti">🎉</div>
             <h2 class="modal-title">Challenge Complete!</h2>
             <p class="modal-text" id="celebrationText"></p>
@@ -1363,6 +1457,7 @@
     <!-- COMPLETION CELEBRATION MODAL -->
     <div class="modal-backdrop" id="completionModal">
         <div class="modal-box completion-modal-box">
+            <button class="modal-close-btn" onclick="closeCompletionModal()" aria-label="Close completion modal">×</button>
             <div class="confetti-container" id="confettiContainer"></div>
             <div class="modal-confetti">🎉🎊</div>
             <h2 class="modal-title completion-title">Vincent's 21st Birthday</h2>
@@ -1800,7 +1895,12 @@
                             <div>
                                 <div style="font-size: 48px; margin-bottom: 10px;">🗺️</div>
                                 <div style="font-weight: bold; margin-bottom: 10px;">Map Not Available</div>
-                                <div style="font-size: 14px;">The Google Maps API failed to load. Please check your config.js file and ensure you have a valid API key.</div>
+                                <div style="font-size: 14px; line-height: 1.6;">The Google Maps API failed to load. This might be due to:</div>
+                                <ul style="list-style: none; padding: 10px 0; font-size: 13px; text-align: left; max-width: 400px; margin: 0 auto;">
+                                    <li style="margin: 5px 0;">• Missing or invalid API key in config.js</li>
+                                    <li style="margin: 5px 0;">• API key restrictions (check if your domain/IP is allowed)</li>
+                                    <li style="margin: 5px 0;">• Network connectivity issues</li>
+                                </ul>
                                 <div style="font-size: 12px; margin-top: 10px; opacity: 0.7;">The challenge list below is still fully functional!</div>
                             </div>
                         </div>
