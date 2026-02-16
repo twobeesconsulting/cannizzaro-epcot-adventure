@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embed Google Maps API Example</title>
-    <script>
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyBcgyqnX0qKID5n3dWgmX-AnHevToI6LSc';
-
-        function loadGoogleMapsAPI() {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        }
-
-        function initMap() {
-            // Your map initialization logic
-        }
-
-        window.onload = function() {
-            loadGoogleMapsAPI();
-        };
-    </script>
+    <title>EPCOT Adventure</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+    <style>
+        /* Add your CSS styles here */
+    </style>
 </head>
 <body>
-    <h1>Google Maps API Embedding Example</h1>
-    <div id="map" style="height: 400px; width: 100%;"></div>
+    <h1>Welcome to the EPCOT Adventure App</h1>
+    <div id="map"></div>
+    <div id="challenges"></div>
+    <div id="stats"></div>
+    <script>
+        // Initialize map
+        function initMap() {
+            var epcot = {lat: 28.3747, lng: -81.5492};
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: epcot
+            });
+        }
+
+        // Load the map
+        window.onload = initMap;
+
+        // Functionality for challenges and stats goes here
+    </script>
 </body>
 </html>
