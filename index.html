@@ -1,38 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPCOT Adventure Application</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Load config.js before the Google Maps API -->
+    <title>EPCOT Adventure</title>
     <script src="config.js"></script>
-    <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
-</head>
-<body>
-    <h1>Welcome to EPCOT Adventure</h1>
-    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async></script>
     <script>
-        let map;
         function initMap() {
-            // Check if API key is valid
-            if (!YOUR_API_KEY) {
-                alert('API key is missing. Please configure your API key in config.js.');
+            // Check if the API key is valid
+            if (!"YOUR_API_KEY") {
+                console.error("API key is missing or invalid.");
                 return;
             }
-            const center = { lat: 28.3852, lng: -81.5681 }; // EPCOT Center coordinates
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: center,
-                zoom: 15,
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 28.3852, lng: -81.5639},
+                zoom: 12
             });
 
-            // Use AdvancedMarkerElement to create markers
+            // Create an advanced marker
             const marker = new google.maps.marker.AdvancedMarkerElement({
-                position: center,
-                map: map,
-                content: '<h2>EPCOT Center</h2>',
+                position: {lat: 28.3852, lng: -81.5639},
+                map: map
             });
         }
     </script>
+</head>
+<body>
+    <h1>Welcome to EPCOT Adventure!</h1>
+    <div id="map" style="height: 500px; width: 100%;"></div>
 </body>
 </html>
