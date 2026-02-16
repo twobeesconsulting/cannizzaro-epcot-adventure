@@ -4,30 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EPCOT Adventure</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
-    <style>
-        /* Add your CSS styles here */
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Welcome to the EPCOT Adventure App</h1>
-    <div id="map"></div>
-    <div id="challenges"></div>
-    <div id="stats"></div>
-    <script>
-        // Initialize map
-        function initMap() {
-            var epcot = {lat: 28.3747, lng: -81.5492};
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 15,
-                center: epcot
-            });
-        }
-
-        // Load the map
-        window.onload = initMap;
-
-        // Functionality for challenges and stats goes here
-    </script>
+    <header>
+        <h1>EPCOT Adventure</h1>
+    </header>
+    <main>
+        <div id="interactive-map"></div>
+        <section id="challenges">
+            <h2>Challenge List</h2>
+            <ul id="challenge-list"></ul>
+        </section>
+        <section id="progress-tracking">
+            <h2>Your Progress</h2>
+            <p id="progress-status"></p>
+        </section>
+        <section id="celebration">
+            <h2>Celebration!</h2>
+            <button id="celebrate-button">Celebrate!</button>
+            <p id="celebration-message"></p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 EPCOT Adventure</p>
+    </footer>
 </body>
 </html>
