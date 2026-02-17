@@ -21,7 +21,7 @@
         // Helper function to clear map div
         function clearMapDiv() {
             const mapDiv = document.getElementById('map');
-            mapDiv.innerHTML = '';
+            mapDiv.replaceChildren();
             return mapDiv;
         }
 
