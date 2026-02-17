@@ -18,14 +18,20 @@
     <script>
         let map;
 
+        // Helper function to clear map div
+        function clearMapDiv() {
+            const mapDiv = document.getElementById('map');
+            mapDiv.innerHTML = '';
+            return mapDiv;
+        }
+
         // Helper function to display error messages safely
         function showErrorMessage(message) {
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error-message';
             errorDiv.textContent = message;
             
-            const mapDiv = document.getElementById('map');
-            mapDiv.innerHTML = '';
+            const mapDiv = clearMapDiv();
             mapDiv.appendChild(errorDiv);
         }
 
@@ -66,8 +72,7 @@
             
             errorDiv.appendChild(document.createTextNode(' and your Google Cloud Console settings.'));
             
-            const mapDiv = document.getElementById('map');
-            mapDiv.innerHTML = '';
+            const mapDiv = clearMapDiv();
             mapDiv.appendChild(errorDiv);
         }
 
@@ -99,7 +104,20 @@
 
         // Load Google Maps API dynamically with the API key from config
         window.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, CONFIG available:', typeof CONFIG !== 'undefined');
+            // Validate CONFIG exists and has required properties
+            if (typeof CONFIG === 'undefined') {
+                console.error('CONFIG is not defined. Please ensure config.js is loaded.');
+                showErrorMessage('Configuration missing. Please ensure config.js file exists.');
+                return;
+            }
+            
+            if (!CONFIG.GOOGLE_MAPS_API_KEY) {
+                console.error('GOOGLE_MAPS_API_KEY is not defined in CONFIG');
+                showErrorMessage('API key missing. Please add your Google Maps API key to config.js.');
+                return;
+            }
+            
+            console.log('DOM loaded, CONFIG available: true');
             
             try {
                 const script = document.createElement('script');
