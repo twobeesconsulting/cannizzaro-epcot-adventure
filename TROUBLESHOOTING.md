@@ -2,44 +2,67 @@
 
 This guide helps resolve common issues with the EPCOT Adventure app.
 
-## Issue: Blank Screen / Map Not Loading
+## Understanding Console Errors
 
-### Symptom
-You see "Welcome to EPCOT Adventure!" but the map area below is blank or shows an error.
+When you see errors in the browser console, they usually indicate one of the following issues:
 
-### Common Causes and Solutions
+### Expected Errors (When Testing Locally or on Unauthorized Domains)
 
-#### 1. API Key Restrictions (Most Common)
+**These are NORMAL and EXPECTED when not on the authorized domain:**
 
-**Symptom**: Console shows errors like:
 ```
 Google Maps JavaScript API warning: NoApiKeys
 Google Maps JavaScript API warning: InvalidKey
 ```
 
-**Cause**: The API key is restricted to specific domains and your current domain isn't allowed.
+**Why?** The API key in this repository is restricted to work ONLY on `twobeesconsulting.github.io` for security reasons. This is intentional and follows best practices.
+
+**Solution:** 
+- Visit the official site: https://twobeesconsulting.github.io/cannizzaro-epcot-adventure/
+- OR create your own API key for local testing (see below)
+
+### Other Console Messages You Might See
+
+```
+Google Maps JavaScript API has been loaded directly without loading=async
+```
+**This is informational only** - The app already loads the API asynchronously using the `async` and `defer` attributes.
+
+## Issue: Blank Screen / Map Not Loading
+
+### Symptom
+You see "Welcome to EPCOT Adventure!" but the map area shows an error message.
+
+### Common Causes and Solutions
+
+#### 1. API Key Domain Restrictions (Most Common)
+
+**Symptom**: You see a pink/red error box saying "Google Maps API Key Restricted"
+
+**Cause**: The API key is restricted to `twobeesconsulting.github.io` domain only.
+
+**This is WORKING AS INTENDED for security!**
 
 **Solutions**:
 
 **Option A - Use the Deployed Site** (Recommended)
-- Visit the official deployed site: https://twobeesconsulting.github.io/cannizzaro-epcot-adventure/
-- The API key is configured to work on this domain (both HTTP and HTTPS)
+- Visit: https://twobeesconsulting.github.io/cannizzaro-epcot-adventure/
+- The map will work perfectly on this domain
 
 **Option B - For Local Development**
+- Create your own Google Maps API key (free for testing)
+- Update `config.js` with your key
+- Your key can allow `localhost` and other domains
+
+**Option C - Add localhost to existing key** (If you manage the key)
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Navigate to: APIs & Services > Credentials
-3. Find the API key (or create a new one)
+3. Find the API key
 4. Under "Application restrictions", add:
    - `http://localhost:*`
    - `http://127.0.0.1:*`
-5. Save changes and wait a few minutes for them to take effect
+5. Save changes and wait a few minutes
 6. Refresh your browser
-
-**Option C - Create Your Own Key**
-1. Follow the setup instructions in [README.md](README.md)
-2. Create your own Google Maps API key
-3. Update the `config.js` file with your key
-4. Make sure to apply proper restrictions
 
 #### 2. Config File Issues
 
@@ -131,7 +154,7 @@ If none of the above solutions work:
 
 ## Quick Reference: Expected Console Messages
 
-**✅ Working correctly:**
+**✅ Working correctly on authorized domain (GitHub Pages):**
 ```
 DOM loaded, CONFIG available: true
 Script tag added to document
@@ -139,6 +162,23 @@ Google Maps API script loaded
 initMap called
 Map loaded successfully
 ```
+
+**⚠️ EXPECTED on unauthorized domains (localhost, etc.):**
+```
+DOM loaded, CONFIG available: true
+Not on authorized domain. Map may not load due to API key restrictions.
+Script tag added to document
+Failed to load Google Maps API
+Google Maps JavaScript API warning: NoApiKeys
+Google Maps JavaScript API warning: InvalidKey
+```
+→ This is NORMAL! Visit the deployed site or create your own API key
+
+**ℹ️ Informational (can be ignored):**
+```
+Google Maps JavaScript API has been loaded directly without loading=async
+```
+→ The app already loads asynchronously - this warning can be safely ignored
 
 **❌ Config missing:**
 ```
