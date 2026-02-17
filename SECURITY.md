@@ -35,7 +35,7 @@ For frontend applications, security is achieved through:
 The application includes a Google Maps API key in `config.js` that has been configured with:
 
 - **Application Restrictions**: HTTP referrer restriction to `*.twobeesconsulting.github.io/*`
-- **API Restrictions**: Limited to Maps JavaScript API only
+- **API Restrictions**: Limited to Maps JavaScript API
 - **Purpose**: Display EPCOT location map only
 
 This configuration allows the app to work on GitHub Pages while preventing unauthorized use.
@@ -107,17 +107,6 @@ If you discover a security vulnerability or notice suspicious API usage:
 - Commit unrestricted API keys to any repository
 - Ignore unusual usage patterns
 - Share API keys across multiple unrelated projects
-   - Maps JavaScript API
-   - Places API
-   - (Only enable what you actually use)
-
-3. **Set quotas and alerts**
-   - Configure daily usage limits
-   - Set up billing alerts
-   - Monitor usage regularly
-
-### .env Files (Alternative Approach)
-For server-side applications, use `.env` files:
 - Keep your API keys and secrets in a local `.env` file only
 - Ensure `.env` (and similar secret files) are included in `.gitignore`
 

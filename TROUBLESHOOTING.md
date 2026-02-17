@@ -23,7 +23,7 @@ Google Maps JavaScript API warning: InvalidKey
 
 **Option A - Use the Deployed Site** (Recommended)
 - Visit the official deployed site: https://twobeesconsulting.github.io/cannizzaro-epcot-adventure/
-- The API key is configured to work on this domain
+- The API key is configured to work on this domain (both HTTP and HTTPS)
 
 **Option B - For Local Development**
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
