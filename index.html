@@ -6,29 +6,44 @@
     <title>EPCOT Adventure</title>
     <script src="config.js"></script>
     <script>
-        // Load Google Maps API dynamically with the API key from config
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-    </script>
-    <script>
         let map;
 
         function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 28.3713, lng: -81.5492},
-                zoom: 12
-            });
+            try {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 28.3713, lng: -81.5492},
+                    zoom: 12
+                });
 
-            // Standard Google Maps markers
-            new google.maps.Marker({
-                position: {lat: 28.3713, lng: -81.5492},
-                map: map,
-                title: 'EPCOT'
-            });
+                // Standard Google Maps markers
+                new google.maps.Marker({
+                    position: {lat: 28.3713, lng: -81.5492},
+                    map: map,
+                    title: 'EPCOT'
+                });
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;">Unable to load Google Maps. Please check your API key configuration.</div>';
+            }
         }
+
+        // Load Google Maps API dynamically with the API key from config
+        window.addEventListener('DOMContentLoaded', function() {
+            try {
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&callback=initMap`;
+                script.async = true;
+                script.defer = true;
+                script.onerror = function() {
+                    console.error('Failed to load Google Maps API');
+                    document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;">Failed to load Google Maps API. Please check your internet connection and API key.</div>';
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                console.error('Error loading Google Maps:', error);
+                document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;">Error: ' + error.message + '</div>';
+            }
+        });
     </script>
 </head>
 <body>
