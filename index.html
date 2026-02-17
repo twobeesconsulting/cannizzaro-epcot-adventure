@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EPCOT Adventure</title>
+    <style>
+        .error-message {
+            padding: 20px;
+            text-align: center;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+    </style>
     <script src="config.js"></script>
     <script>
         let map;
@@ -11,7 +21,7 @@
         // Helper function to display error messages safely
         function showErrorMessage(message) {
             const errorDiv = document.createElement('div');
-            errorDiv.style.cssText = 'padding: 20px; text-align: center; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;';
+            errorDiv.className = 'error-message';
             errorDiv.textContent = message;
             
             const mapDiv = document.getElementById('map');
@@ -19,10 +29,46 @@
             mapDiv.appendChild(errorDiv);
         }
 
-        // Helper function to display detailed error message with HTML content (safe)
+        // Helper function to display detailed error message with HTML content
         function showDetailedError() {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            
+            const title = document.createElement('strong');
+            title.textContent = 'Failed to load Google Maps API.';
+            errorDiv.appendChild(title);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            const subtitle = document.createTextNode('This may be due to:');
+            errorDiv.appendChild(subtitle);
+            errorDiv.appendChild(document.createElement('br'));
+            
+            const reasons = [
+                '• API key restrictions (domain whitelist)',
+                '• Billing not enabled on Google Cloud',
+                '• API not enabled in Google Cloud Console',
+                '• Network/firewall blocking'
+            ];
+            
+            reasons.forEach(reason => {
+                errorDiv.appendChild(document.createTextNode(reason));
+                errorDiv.appendChild(document.createElement('br'));
+            });
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createTextNode('Please check '));
+            
+            const code = document.createElement('code');
+            code.textContent = 'config.js';
+            errorDiv.appendChild(code);
+            
+            errorDiv.appendChild(document.createTextNode(' and your Google Cloud Console settings.'));
+            
             const mapDiv = document.getElementById('map');
-            mapDiv.innerHTML = '<div style="padding: 20px; text-align: center; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;"><strong>Failed to load Google Maps API.</strong><br><br>This may be due to:<br>• API key restrictions (domain whitelist)<br>• Billing not enabled on Google Cloud<br>• API not enabled in Google Cloud Console<br>• Network/firewall blocking<br><br>Please check <code>config.js</code> and your Google Cloud Console settings.</div>';
+            mapDiv.innerHTML = '';
+            mapDiv.appendChild(errorDiv);
         }
 
         function initMap() {
@@ -47,7 +93,7 @@
                 console.log('Map loaded successfully');
             } catch (error) {
                 console.error('Error initializing map:', error);
-                showErrorMessage('Unable to load Google Maps. Error: ' + error.message);
+                showErrorMessage('Unable to load Google Maps. Please check your configuration.');
             }
         }
 
@@ -71,7 +117,7 @@
                 console.log('Script tag added to document');
             } catch (error) {
                 console.error('Error loading Google Maps:', error);
-                showErrorMessage('Error: ' + error.message);
+                showErrorMessage('Unable to load map. Please check your configuration.');
             }
         });
     </script>
