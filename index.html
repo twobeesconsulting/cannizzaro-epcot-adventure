@@ -98,8 +98,54 @@
                 console.log('Map loaded successfully');
             } catch (error) {
                 console.error('Error initializing map:', error);
-                showErrorMessage('Unable to load Google Maps. Please check your configuration.');
+                
+                // Check if it's an API key restriction error
+                if (error.message && error.message.includes('API')) {
+                    showDomainRestrictionError();
+                } else {
+                    showErrorMessage('Unable to load Google Maps. Please check your configuration.');
+                }
             }
+        }
+
+        // Helper function for domain restriction errors
+        function showDomainRestrictionError() {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            
+            const title = document.createElement('strong');
+            title.textContent = 'Google Maps API Key Restricted';
+            errorDiv.appendChild(title);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            errorDiv.appendChild(document.createTextNode('This API key is restricted to work only on: '));
+            
+            const domain = document.createElement('code');
+            domain.textContent = 'twobeesconsulting.github.io';
+            errorDiv.appendChild(domain);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            errorDiv.appendChild(document.createTextNode('To use this app:'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            const link = document.createElement('a');
+            link.href = 'https://twobeesconsulting.github.io/cannizzaro-epcot-adventure/';
+            link.textContent = 'Visit the official deployed site';
+            link.target = '_blank';
+            link.style.color = '#721c24';
+            link.style.fontWeight = 'bold';
+            errorDiv.appendChild(document.createTextNode('• '));
+            errorDiv.appendChild(link);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createTextNode('• Or create your own API key (see README.md)'));
+            
+            const mapDiv = clearMapDiv();
+            mapDiv.appendChild(errorDiv);
         }
 
         // Load Google Maps API dynamically with the API key from config
@@ -119,6 +165,15 @@
             
             console.log('DOM loaded, CONFIG available: true');
             
+            // Check if we're on an authorized domain
+            const currentDomain = window.location.hostname;
+            const isLocalhost = currentDomain === 'localhost' || currentDomain === '127.0.0.1';
+            const isAuthorizedDomain = currentDomain.includes('twobeesconsulting.github.io');
+            
+            if (!isAuthorizedDomain && !isLocalhost) {
+                console.warn('Not on authorized domain. Map may not load due to API key restrictions.');
+            }
+            
             try {
                 const script = document.createElement('script');
                 script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&callback=initMap`;
@@ -129,7 +184,13 @@
                 };
                 script.onerror = function(e) {
                     console.error('Failed to load Google Maps API', e);
-                    showDetailedError();
+                    // Check if we're on the allowed domain
+                    const currentDomain = window.location.hostname;
+                    if (!currentDomain.includes('twobeesconsulting.github.io')) {
+                        showDomainRestrictionError();
+                    } else {
+                        showDetailedError();
+                    }
                 };
                 document.head.appendChild(script);
                 console.log('Script tag added to document');
