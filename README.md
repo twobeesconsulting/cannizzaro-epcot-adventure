@@ -41,29 +41,26 @@ This app is optimized for mobile use! Simply:
 
 ## 🛠️ Setup Instructions
 
-### Quick Start (No Setup Required)
+### Quick Start (Ready to Use!)
 
-Simply open `index.html` in your web browser - that's it! The app works immediately.
+The app is ready to use immediately! Simply visit the [deployed site](https://twobeesconsulting.github.io/cannizzaro-epcot-adventure/) or open `index.html` in your web browser.
 
-**Note**: The map feature requires a Google Maps API key. If you want to use the interactive map:
+**Note**: The app includes a configured Google Maps API key for the EPCOT location. The key has been restricted to:
+- Only work on the GitHub Pages domain (twobeesconsulting.github.io)
+- Only access Maps JavaScript API
+- This ensures security while allowing the app to work out of the box
 
-1. Copy `config.example.js` to `config.js`:
-   ```bash
-   cp config.example.js config.js
-   ```
+### For Local Development
 
-2. Add your Google Maps API key to `config.js`:
-   ```javascript
-   const CONFIG = {
-       GOOGLE_MAPS_API_KEY: 'YOUR_API_KEY_HERE'
-   };
-   ```
+If you want to run the app locally or customize it:
 
-3. Refresh the page
+1. The `config.js` file contains the API key configuration
+2. For security, the API key is restricted to work only on the deployed domain
+3. To use locally, you'll need to add `http://localhost:*` to the API key restrictions in Google Cloud Console, or create your own API key
 
-**Important**: The `config.js` file is gitignored for security. Each user needs their own API key.
+### Getting Your Own Google Maps API Key (Optional)
 
-### Getting a Google Maps API Key
+If you want to customize the app with your own API key:
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
@@ -72,6 +69,12 @@ Simply open `index.html` in your web browser - that's it! The app works immediat
 5. **Restrict your API key** to prevent unauthorized use:
    - Set HTTP referrer restrictions
    - Limit to Maps JavaScript API and Places API only
+6. Update the API key in `config.js`:
+   ```javascript
+   const CONFIG = {
+       GOOGLE_MAPS_API_KEY: 'YOUR_API_KEY_HERE'
+   };
+   ```
 
 For detailed security information, see [SECURITY.md](SECURITY.md).
 

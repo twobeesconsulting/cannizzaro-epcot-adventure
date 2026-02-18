@@ -4,24 +4,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EPCOT Adventure</title>
+    <style>
+        .error-message {
+            padding: 20px;
+            text-align: center;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+    </style>
     <script src="config.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=" + window.GOOGLE_MAPS_API_KEY + "&callback=initMap" async defer></script>
     <script>
         let map;
 
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 28.3713, lng: -81.5492},
-                zoom: 12
-            });
-
-            // Standard Google Maps markers
-            new google.maps.Marker({
-                position: {lat: 28.3713, lng: -81.5492},
-                map: map,
-                title: 'EPCOT'
-            });
+        // Helper function to clear map div
+        function clearMapDiv() {
+            const mapDiv = document.getElementById('map');
+            mapDiv.replaceChildren();
+            return mapDiv;
         }
+
+        // Helper function to display error messages safely
+        function showErrorMessage(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            
+            const mapDiv = clearMapDiv();
+            mapDiv.appendChild(errorDiv);
+        }
+
+        // Helper function to display detailed error message with HTML content
+        function showDetailedError() {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            
+            const title = document.createElement('strong');
+            title.textContent = 'Failed to load Google Maps API.';
+            errorDiv.appendChild(title);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            const subtitle = document.createTextNode('This may be due to:');
+            errorDiv.appendChild(subtitle);
+            errorDiv.appendChild(document.createElement('br'));
+            
+            const reasons = [
+                '• API key restrictions (domain whitelist)',
+                '• Billing not enabled on Google Cloud',
+                '• API not enabled in Google Cloud Console',
+                '• Network/firewall blocking'
+            ];
+            
+            reasons.forEach(reason => {
+                errorDiv.appendChild(document.createTextNode(reason));
+                errorDiv.appendChild(document.createElement('br'));
+            });
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createTextNode('Please check '));
+            
+            const code = document.createElement('code');
+            code.textContent = 'config.js';
+            errorDiv.appendChild(code);
+            
+            errorDiv.appendChild(document.createTextNode(' and your Google Cloud Console settings.'));
+            
+            const mapDiv = clearMapDiv();
+            mapDiv.appendChild(errorDiv);
+        }
+
+        // Helper function to check if on authorized domain
+        function isOnAuthorizedDomain() {
+            const currentDomain = window.location.hostname;
+            return currentDomain.includes('twobeesconsulting.github.io');
+        }
+
+        function initMap() {
+            console.log('initMap called');
+            try {
+                if (typeof google === 'undefined' || !google.maps) {
+                    throw new Error('Google Maps API not loaded');
+                }
+                
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 28.3713, lng: -81.5492},
+                    zoom: 12
+                });
+
+                // Standard Google Maps markers
+                new google.maps.Marker({
+                    position: {lat: 28.3713, lng: -81.5492},
+                    map: map,
+                    title: 'EPCOT'
+                });
+                
+                console.log('Map loaded successfully');
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                
+                // Check for Google Maps specific errors
+                const errorName = error.name || '';
+                const errorMessage = error.message || '';
+                const isGoogleMapsError = errorName.includes('MapError') || 
+                                          errorMessage.includes('InvalidKey') ||
+                                          errorMessage.includes('RefererNotAllowed');
+                
+                if (isGoogleMapsError || !isOnAuthorizedDomain()) {
+                    showDomainRestrictionError();
+                } else {
+                    showErrorMessage('Unable to load Google Maps. Please check your configuration.');
+                }
+            }
+        }
+
+        // Helper function for domain restriction errors
+        function showDomainRestrictionError() {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            
+            const title = document.createElement('strong');
+            title.textContent = 'Google Maps API Key Restricted';
+            errorDiv.appendChild(title);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            errorDiv.appendChild(document.createTextNode('This API key is restricted to work only on: '));
+            
+            const domain = document.createElement('code');
+            domain.textContent = 'twobeesconsulting.github.io';
+            errorDiv.appendChild(domain);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            errorDiv.appendChild(document.createTextNode('To use this app:'));
+            errorDiv.appendChild(document.createElement('br'));
+            
+            const link = document.createElement('a');
+            link.href = 'https://twobeesconsulting.github.io/cannizzaro-epcot-adventure/';
+            link.textContent = 'Visit the official deployed site';
+            link.target = '_blank';
+            link.style.color = '#721c24';
+            link.style.fontWeight = 'bold';
+            errorDiv.appendChild(document.createTextNode('• '));
+            errorDiv.appendChild(link);
+            
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(document.createTextNode('• Or create your own API key (see README.md)'));
+            
+            const mapDiv = clearMapDiv();
+            mapDiv.appendChild(errorDiv);
+        }
+
+        // Load Google Maps API dynamically with the API key from config
+        window.addEventListener('DOMContentLoaded', function() {
+            // Validate CONFIG exists and has required properties
+            if (typeof CONFIG === 'undefined') {
+                console.error('CONFIG is not defined. Please ensure config.js is loaded.');
+                showErrorMessage('Configuration missing. Please ensure config.js file exists.');
+                return;
+            }
+            
+            if (!CONFIG.GOOGLE_MAPS_API_KEY) {
+                console.error('GOOGLE_MAPS_API_KEY is not defined in CONFIG');
+                showErrorMessage('API key missing. Please add your Google Maps API key to config.js.');
+                return;
+            }
+            
+            console.log('DOM loaded, CONFIG available: true');
+            
+            // Show warning if not on authorized domain
+            if (!isOnAuthorizedDomain()) {
+                console.warn('Not on authorized domain. Map may not load due to API key restrictions.');
+            }
+            
+            try {
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&callback=initMap`;
+                script.async = true;
+                script.defer = true;
+                script.onload = function() {
+                    console.log('Google Maps API script loaded');
+                };
+                script.onerror = function(e) {
+                    console.error('Failed to load Google Maps API', e);
+                    // Show domain restriction error if not on authorized domain
+                    if (!isOnAuthorizedDomain()) {
+                        showDomainRestrictionError();
+                    } else {
+                        showDetailedError();
+                    }
+                };
+                document.head.appendChild(script);
+                console.log('Script tag added to document');
+            } catch (error) {
+                console.error('Error loading Google Maps:', error);
+                showErrorMessage('Unable to load map. Please check your configuration.');
+            }
+        });
     </script>
 </head>
 <body>

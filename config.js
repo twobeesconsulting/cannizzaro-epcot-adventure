@@ -1,5 +1,3 @@
-const config = {
-  apiKey: 'AIzaSyBcgyqnX0qKID5n3dWgmX-AnHevToI6LSc'
+const CONFIG = {
+  GOOGLE_MAPS_API_KEY: 'AIzaSyBcgyqnX0qKID5n3dWgmX-AnHevToI6LSc'
 };
-
-export default config;

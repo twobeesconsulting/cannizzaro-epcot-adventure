@@ -1,25 +1,21 @@
 # Security Policy for Cannizzaro Epcot Adventure
 
-This document outlines best practices and required steps for securing sensitive credentials—especially Google API keys—used in this project.
+This document outlines the security approach for this project, specifically regarding the Google Maps API key.
 
 ## Table of Contents
 1. About This Policy
-2. Frontend API Key Considerations
-3. GitHub Secret Scanning Alerts
-4. Secure Credential Handling
-   - Storing API Keys
-   - .env files and config.js
-   - Secret Managers
-5. Workflow for Contributors
-6. Key Rotation Procedure
-7. Reporting Vulnerabilities
+2. Frontend API Key Security
+3. Current Configuration
+4. GitHub Secret Scanning Alerts
+5. For Contributors
+6. Reporting Vulnerabilities
 
 ---
 
 ## 1. About This Policy
-Protecting sensitive credentials is critical to the integrity and security of the application and user data. Public exposure can lead to data theft, app abuse, and other breaches.
+This project uses a Google Maps API key to display an interactive map. As a frontend-only application, special considerations apply to API key security.
 
-## 2. Frontend API Key Considerations
+## 2. Frontend API Key Security
 
 **Important**: This is a frontend-only application (static HTML/JavaScript). This means:
 
@@ -29,14 +25,32 @@ Protecting sensitive credentials is critical to the integrity and security of th
 
 ### Proper Security Approach
 
-Instead of trying to hide the API key (which is impossible in a frontend app), we:
-1. Use a **restricted API key** with proper limitations
-2. Keep the config file in `.gitignore` to avoid committing it
-3. Document proper restrictions for contributors
+For frontend applications, security is achieved through:
+1. **API Key Restrictions** - Limiting what the key can do and where it can be used
+2. **Usage Quotas** - Setting limits to prevent abuse
+3. **Monitoring** - Regular checking of usage patterns
 
-## 3. GitHub Secret Scanning Alerts
+## 3. Current Configuration
 
-**You may continue to receive GitHub secret scanning alerts even with proper restrictions in place.** This is expected behavior because:
+The application includes a Google Maps API key in `config.js` that has been configured with:
+
+- **Application Restrictions**: HTTP referrer restriction to `*.twobeesconsulting.github.io/*`
+- **API Restrictions**: Limited to Maps JavaScript API
+- **Purpose**: Display EPCOT location map only
+
+This configuration allows the app to work on GitHub Pages while preventing unauthorized use.
+
+### Why config.js is Committed
+
+Unlike typical practice where config files are gitignored:
+- This is a **public demo application** meant to work immediately when deployed
+- The API key is **already restricted** to only work on the GitHub Pages domain
+- Users can see a working map without needing to configure anything
+- The key has minimal permissions and is monitored
+
+## 4. GitHub Secret Scanning Alerts
+
+**You may receive GitHub secret scanning alerts for the API key.** This is expected because:
 
 - GitHub scans commits for patterns that look like API keys
 - It cannot verify whether the key has restrictions applied
@@ -44,67 +58,55 @@ Instead of trying to hide the API key (which is impossible in a frontend app), w
 
 ### How to Handle These Alerts
 
-1. **Verify your API key restrictions** in Google Cloud Console:
-   - Go to APIs & Services > Credentials
-   - Check that your key has Application restrictions (HTTP referrers)
-   - Confirm API restrictions are set to only Maps JavaScript API and Places API
-   - Ensure usage limits are configured
+1. **Verify the API key restrictions** in Google Cloud Console are properly configured
+2. **Mark the alert** as "Won't fix" or "Used in tests" with a note about restrictions
+3. **Monitor usage** regularly in Google Cloud Console
+4. If you see unexpected usage, rotate the key immediately
 
-2. **If restrictions are properly configured**, you can:
-   - Mark the GitHub alert as "resolved" or "false positive"
-   - Document in your team that the key is restricted
-   - Continue monitoring usage in Google Cloud Console
+## 5. For Contributors
 
-3. **To eliminate future alerts**, consider:
-   - Using a backend proxy service to completely hide the API key
-   - Using a serverless function (e.g., Netlify Functions, Cloudflare Workers)
-   - Note: This adds complexity and may not be necessary if restrictions are properly set
+If you want to customize or extend this application:
 
-## 4. Secure Credential Handling
+1. **To use your own API key**:
+   - Create a Google Maps API key in Google Cloud Console
+   - Apply proper restrictions (see Google's documentation)
+   - Update `config.js` with your key
+   - Test locally before committing
 
-### Risks of Exposed Credentials
-- Unexpected usage and billing charges
-- Unauthorized access to APIs and data
-- Compromised user trust and legal risk
+2. **Do not commit unrestricted API keys**:
+   - Always verify restrictions are in place before committing
+   - If you accidentally commit an unrestricted key, revoke it immediately
+   - Create a new key with proper restrictions
 
-### Storing API Keys
-- **Never** commit API keys or secrets to git without restrictions in place
-- Use environment variables or config files to store sensitive data
-- Prefer managed secret storage solutions for production
-- **Always** apply proper API restrictions in Google Cloud Console
+3. **For local development**:
+   - The committed key is restricted to GitHub Pages domain
+   - To test locally, you may need to add `http://localhost:*` to the key's allowed referrers
+   - Or create your own development key
 
-### config.js Files
-- Keep your API keys and secrets in a local `config.js` file only
-- Ensure `config.js` is included in `.gitignore`
-- Use `config.example.js` as a template for contributors
+## 6. Reporting Vulnerabilities
 
-Example `config.js` file (see `config.example.js`):
-```javascript
-const CONFIG = {
-    GOOGLE_MAPS_API_KEY: 'your-google-api-key-here'
-};
-```
+If you discover a security vulnerability or notice suspicious API usage:
 
-### Google Maps API Key Restrictions
+1. **Do NOT** open a public issue
+2. Contact the repository owner directly through GitHub
+3. Provide details about the vulnerability
+4. Allow time for the issue to be addressed before public disclosure
 
-**Required restrictions for Google Maps API keys:**
+---
 
-1. **Application restrictions** → HTTP referrers (websites)
-   - Add your domain(s): `https://yourdomain.com/*`
-   - For local development: `http://localhost:*`
+## Best Practices Summary
 
-2. **API restrictions** → Restrict key to specific APIs
-   - Maps JavaScript API
-   - Places API
-   - (Only enable what you actually use)
+✅ **Do:**
+- Use restricted API keys with HTTP referrer and API restrictions
+- Monitor usage regularly in Google Cloud Console
+- Set up usage quotas and billing alerts
+- Document the security approach for your team
 
-3. **Set quotas and alerts**
-   - Configure daily usage limits
-   - Set up billing alerts
-   - Monitor usage regularly
-
-### .env Files (Alternative Approach)
-For server-side applications, use `.env` files:
+❌ **Don't:**
+- Try to "hide" API keys in frontend code (it's impossible)
+- Commit unrestricted API keys to any repository
+- Ignore unusual usage patterns
+- Share API keys across multiple unrelated projects
 - Keep your API keys and secrets in a local `.env` file only
 - Ensure `.env` (and similar secret files) are included in `.gitignore`
 
