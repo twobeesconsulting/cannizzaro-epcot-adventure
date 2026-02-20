@@ -1387,6 +1387,10 @@
     <!-- Load configuration first -->
     <script src="config.js"></script>
 
+    <!-- Firebase SDK (compat version - no module bundler needed) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
     <script>
         // Load Google Maps API dynamically
         function loadGoogleMapsAPI() {
@@ -1761,11 +1765,75 @@
         let completed = JSON.parse(localStorage.getItem('vincentChallenges') || '[]');
         let map, markers = [];
 
+        // ── Firebase real-time sync ──────────────────────────────────────────
+        let db = null;
+        let syncEnabled = false;
+        let firebaseInitialized = false;
+
+        function initFirebase() {
+            try {
+                const cfg = (typeof CONFIG !== 'undefined') ? CONFIG : {};
+                if (!cfg.FIREBASE_DATABASE_URL) {
+                    console.warn('Firebase not configured — running in local-only mode.');
+                    return;
+                }
+                const firebaseConfig = {
+                    apiKey:            cfg.FIREBASE_API_KEY || '',
+                    authDomain:        cfg.FIREBASE_AUTH_DOMAIN || '',
+                    databaseURL:       cfg.FIREBASE_DATABASE_URL,
+                    projectId:         cfg.FIREBASE_PROJECT_ID || '',
+                    appId:             cfg.FIREBASE_APP_ID || ''
+                };
+
+                // Only initialize once (compat SDK adds to window.firebase)
+                const app = firebase.apps.length
+                    ? firebase.apps[0]
+                    : firebase.initializeApp(firebaseConfig);
+                db = firebase.database(app);
+                syncEnabled = true;
+
+                const completedRef = db.ref('session/completed');
+
+                // Listen for remote changes → re-render on ALL devices
+                completedRef.on('value', (snapshot) => {
+                    const remote = snapshot.val();
+                    if (remote !== null && Array.isArray(remote)) {
+                        // Firebase has data — use it as source of truth
+                        completed = remote;
+                    } else if (remote === null) {
+                        // Firebase is empty — promote any localStorage data
+                        const local = JSON.parse(localStorage.getItem('vincentChallenges') || '[]');
+                        if (local.length > 0) {
+                            completed = local;
+                            completedRef.set(completed); // seeds all other devices
+                            return; // onValue will fire again with the promoted data
+                        } else {
+                            completed = [];
+                        }
+                    }
+                    localStorage.setItem('vincentChallenges', JSON.stringify(completed));
+                    renderChallenges();
+                    updateStats();
+                });
+
+            } catch (err) {
+                console.error('Firebase init failed — falling back to localStorage only.', err);
+                syncEnabled = false;
+            }
+        }
+        // ────────────────────────────────────────────────────────────────────
+
         // Initialize
         async function init() {
             // Always render challenges and stats, even if map fails
             renderChallenges();
             updateStats();
+
+            // Start Firebase sync on first load only
+            if (!firebaseInitialized) {
+                firebaseInitialized = true;
+                initFirebase();
+            }
 
             // Try to load and initialize map (map is optional)
             try {
@@ -1950,8 +2018,17 @@
                 completed.splice(index, 1);
             }
 
+            // Always keep localStorage in sync as a local fallback
             localStorage.setItem('vincentChallenges', JSON.stringify(completed));
-            await init(); // Re-render everything first
+
+            if (syncEnabled && db) {
+                // Write to Firebase — the onValue listener fires on ALL devices,
+                // triggering renderChallenges() + updateStats() everywhere
+                await db.ref('session/completed').set(completed);
+            } else {
+                // No Firebase: re-render locally
+                await init();
+            }
 
             if (wasAdded) {
                 showCelebration(challenge.celebration); // Show modal AFTER re-render
@@ -2238,11 +2315,16 @@
         }
 
         // Reset all progress
-        function resetAll() {
+        async function resetAll() {
             if (confirm('Are you sure you want to reset all progress? This cannot be undone!')) {
                 completed = [];
                 localStorage.removeItem('vincentChallenges');
-                init();
+                if (syncEnabled && db) {
+                    await db.ref('session/completed').set([]);
+                    // onValue listener will trigger re-render
+                } else {
+                    init();
+                }
             }
         }
 
